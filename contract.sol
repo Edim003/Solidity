@@ -15,7 +15,12 @@ contract ZombieWorld {
     
     Zombie[] public zombies;
 
+    mapping (uint => address) public ZombieToOwner;
+    mapping (address => uint) userZombieCount;
+
     function _createZombie(string memory _name,uint _dna) private {
+        ZombieToOwner[id] = msg.sender;
+        userZombieCount[msg.sender]++;
         uint id = zombies.push(Zombie(_name,_dna)) - 1;
         emit ZombieCreated(id, _name, _dna);
     }
@@ -27,6 +32,7 @@ contract ZombieWorld {
 
     function _createRandomZombie(string memory _name) public {
         uint randDna = _genRandomNo(_name);
+        require(userZombieCount[msg.sender] == 0);
         _createZombie(_name, randDna);
     } 
         
