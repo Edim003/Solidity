@@ -1,13 +1,29 @@
 // SPDX-License-Identifier: SEE LICENSE IN LICENSE
-pragma solidity >= 0.5.0 < 0.6.0;
+pragma solidity ^0.8.28;
 
 import "./zombieFeeding.sol";
 
 contract ZombieHelper is ZombieFeeding {
 
+    uint levelUpFee = 0.001 ether;
+
+    function withdraw() external onlyOwner {
+        address payable _owner = address(uint16(owner()));
+        _owner.transfer(address(this).balance);
+    }
+
     modifier aboveLevel (uint _level, uint _zombieId) view internal returns (bool) {
         return zombies[_zombieId].level > _level;
         _;
+    }
+
+    function setLevelupFee(uint _fee) external onlyOwner {
+        levelUpFee = _fee;
+    }
+
+    function levelUp(uint _zombieId) external payable {
+        require(msg.value == levelUpFee);
+        zombies[_zombieId].level++;
     }
 
     function changeName (uint _zombieId, string memory _newname) external aboveLevel(2, _zombieId) {

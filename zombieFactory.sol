@@ -1,4 +1,4 @@
-pragma solidity >=0.5.0 <0.6.0
+pragma solidity ^0.8.28;
 
 contract ZombieFactory {
 
@@ -14,6 +14,8 @@ contract ZombieFactory {
         uint dna;
         uint32 level;
         uint32 readyTime;
+        uint16 winCount;
+        uint16 lossCount;
     } 
     
     Zombie[] public zombies;
@@ -22,9 +24,10 @@ contract ZombieFactory {
     mapping (address => uint) userZombieCount;
 
     function _createZombie(string memory _name,uint _dna) internal {
-        ZombieToOwner[id] = msg.sender;
+        zombies.push(Zombie(_name,_dna,1,uint32(now + cooldownTime), 0, 0));
+        uint id = zombies.length - 1;
+        zombieToOwner[id] = msg.sender;
         userZombieCount[msg.sender]++;
-        uint id = zombies.push(Zombie(_name,_dna,1,uint32(now + cooldownTime))) - 1;
         emit ZombieCreated(id, _name, _dna);
     }
 
