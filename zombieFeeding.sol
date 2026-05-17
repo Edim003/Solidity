@@ -22,7 +22,7 @@ contract ZombieFeeding is ZombieWorld {
 
     KittyInterface kittyContract;
 
-    modifier ownerOf(uint _zombieId) {
+    modifier OnlyOwnerOf(uint _zombieId) {
         require(msg.sender == zombieToOwner[_zombieId]);
         _;
     }
@@ -32,11 +32,11 @@ contract ZombieFeeding is ZombieWorld {
     }
 
     function _triggerCooldown(Zombie storage _zombie) internal {
-        _zombie.readyTime = uint(now + cooldownTime);
+        _zombie.readyTime = uint(block.timestamp + cooldownTime);
     }
 
     function _isReady(Zombie storage _zombie) internal view returns (bool) {
-        return (_zombie.readyTime <= now);
+        return (_zombie.readyTime <= block.timestamp);
     }
 
     function feedAndMultiply(uint _zombieId, uint _targetDna, string _species) internal ownerOf(_zombieId) {
